@@ -1,8 +1,7 @@
-
-/* $Id$ */
-
 #ifndef __MAIN_H
 #define __MAIN_H
+
+/* $Id$ */
 
 #define AUTHOR "Jesse Kornblum"
 
