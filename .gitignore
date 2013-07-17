@@ -1,0 +1,19 @@
+# Autoconf and OS X files
+.DS_Store
+*.o
+*.exe
+*~
+*Makefile
+*Makefile.in
+config.*
+aclocal.m4
+autom4te.cache
+.deps
+configure
+stamp-h1
+stamp-h
+test-driver
+compile
+depcomp
+install-sh
+missing

@@ -23,8 +23,8 @@
 #include <limits.h>
 
 #ifndef HAVE_FSEEKO
-# define fseeko  fseek
-# define ftello  ftell
+# define fseeko  _fseeki64
+# define ftello  _ftelli64
 #endif
 
 #ifdef HAVE_LIBGEN_H
@@ -44,7 +44,7 @@
 extern char *__progname;
 #else
 char *__progname;
-#endif 
+#endif
 
 
 #ifndef WIN32
@@ -90,10 +90,10 @@ uint16_t bswap16(uint16_t b);
 #define byteswap16(x)   (x)
 #endif
 
- 
+
 
 /* **************
-   User Interface 
+   User Interface
    ************** */
 
 /* Display an ordinary status message to stdout */

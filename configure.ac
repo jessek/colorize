@@ -7,7 +7,7 @@ AC_CANONICAL_HOST
 
 case $host in
   *-*-*linux*-*) AC_DEFINE([__LINUX__],1,[Linux operating system functions]) ;;
-  *-*-mingw32)   LIBS="-liberty $LIBS" && CPPFLAGS="-DUNICODE -D_UNICODE $CPPFLAGS"
+  *-*-mingw32)   LIBS="/opt/local/i386-mingw32/lib/libmsvcr90.a -liberty $LIBS" && CPPFLAGS="-DUNICODE -D_UNICODE $CPPFLAGS"
 esac
 
 AC_PROG_CC
@@ -41,9 +41,9 @@ AC_CHECK_HEADERS([sys/mount.h],[],[],
 [#ifdef HAVE_SYS_TYPES_H
  # include <sys/types.h>
  #endif
- #ifdef HAVE_SYS_PARAM_H                                                     
- # include <sys/param.h>                           
- #endif])                    
+ #ifdef HAVE_SYS_PARAM_H
+ # include <sys/param.h>
+ #endif])
 
 #AC_HEADER_TIME
 

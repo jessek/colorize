@@ -1,3 +1,7 @@
+2013-07-17 Jesse Kornblum <research@jessekornblum.com>:
+
+	* main.h: Switched ftell and fseek to 64-bit versions.
+
 2013-03-05 Jesse Kornblum <research@jessekornblum.com>:
 
 	* Updated all files for the modern era.
