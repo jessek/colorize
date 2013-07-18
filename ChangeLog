@@ -1,6 +1,8 @@
 2013-07-17 Jesse Kornblum <research@jessekornblum.com>:
 
 	* main.h: Switched ftell and fseek to 64-bit versions.
+	* configure.ac: Version bump to 1.1
+	* Makefile.am: Updated to use new OS X cross compiler
 
 2013-03-05 Jesse Kornblum <research@jessekornblum.com>:
 

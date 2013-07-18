@@ -1,5 +1,5 @@
 
-AC_INIT([colorize],[1.0],[research@jessekornblum.com])
+AC_INIT([colorize],[1.1],[research@jessekornblum.com])
 AM_INIT_AUTOMAKE
 
 AC_GNU_SOURCE
@@ -7,7 +7,7 @@ AC_CANONICAL_HOST
 
 case $host in
   *-*-*linux*-*) AC_DEFINE([__LINUX__],1,[Linux operating system functions]) ;;
-  *-*-mingw32)   LIBS="/opt/local/i386-mingw32/lib/libmsvcr90.a -liberty $LIBS" && CPPFLAGS="-DUNICODE -D_UNICODE $CPPFLAGS"
+  *-*-mingw32)   CPPFLAGS="-DUNICODE -D_UNICODE $CPPFLAGS"
 esac
 
 AC_PROG_CC
