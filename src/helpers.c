@@ -29,19 +29,16 @@ int find_file_size(char *fn, FILE *h, off_t *sz)
 {
   off_t orig = ftello(h);
   
-  if (fseeko(h,0,SEEK_END))
-    {
-      perror(fn);
-      return TRUE;
-    }
+  if (fseeko(h, 0, SEEK_END)) {
+    perror(fn);
+    return TRUE;
+  }
   
   *sz = ftello(h);
   
-  if (fseeko(h,orig,SEEK_SET))
-    {
-      perror(fn);
-      return TRUE;
-    }
+  if (fseeko(h, orig, SEEK_SET)) { 
+    perror(fn);
+    return TRUE;
 
   return FALSE;
 }

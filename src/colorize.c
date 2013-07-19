@@ -1,5 +1,5 @@
 
-/* $Id$ */
+// $Id$
 
 #include "main.h"
 
@@ -68,13 +68,13 @@ static int write_file_header(state *s)
   b.bfSize = byteswap32((s->image_width * s->image_height * 3) + 54);
   b.bfReserved1 = 0;
 
-  /* The offset in the file where RGB image data begins */
+  // The offset in the file where RGB image data begins 
   b.bfOffBits   = byteswap32(0x36);
 
   fwrite(&b.bfType,1,2,s->out_handle);
   fwrite(&b.bfSize,1,4,s->out_handle);
 
-  /* Write both reserved values at once */
+  // Write both reserved values at once 
   fwrite(&b.bfReserved1,1,2,s->out_handle);
   fwrite(&b.bfReserved1,1,2,s->out_handle);
 
@@ -89,7 +89,7 @@ static int write_file_info(state *s)
 {
   BITMAPINFOHEADER b;
 
-  /* Size of the this header information */
+  // Size of the this header information
   b.biSize = byteswap32(HEADERINFOSIZE);  
 
   if (s->orientation == ORIENTATION_VERTICAL)
@@ -107,13 +107,13 @@ static int write_file_info(state *s)
   b.biBitCount    = byteswap16(24);
   b.biCompression = BI_RGB;
 
-  /* How much RGB data follows this header */
+  // How much RGB data follows this header 
   b.biSizeImage = byteswap32((s->image_width * s->image_height) * 3);
 
   b.biXPelsPerMeter = 0;
   b.biYPelsPerMeter = 0;
-  /* These values denote how many values are in the RGB color map
-     that follows. */
+  // These values denote how many values are in the RGB color map
+  // that follows. 
   b.biClrUsed       = 0;
   b.biClrImportant  = 0;
 
@@ -130,11 +130,11 @@ static int write_file_info(state *s)
 }
   
 
-/* We must accept a signed value to handle the negative values
-   we may be passed by the file read routine. The Red computation
-   requests lookup_color(input char - 128) which can easily be -128. */
+// We must accept a signed value to handle the negative values
+// we may be passed by the file read routine. The Red computation
+// requests lookup_color(input char - 128) which can easily be -128. */
 
-/* RBF - Document the process of lookup_color */
+// RBF - Document the process of lookup_color 
 static unsigned char lookup_color(int16_t c)
 {
   if (c < 0)
@@ -157,7 +157,7 @@ static int write_byte(state *s, unsigned char c)
   if (0 == c)
     r.rgbBlue = r.rgbRed = r.rgbGreen = 0;
   else if (0xff == c)
-    /* RBF - What happens if 0xff characters are just dark red? */
+    // RBF - What happens if 0xff characters are just dark red? 
     r.rgbBlue = r.rgbRed = r.rgbGreen = 0xff;
   else
     {
@@ -172,78 +172,66 @@ static int write_byte(state *s, unsigned char c)
 }
 
 
-static void pad_image(state *s, uint32_t val)
-{  
-  switch (val % 4) 
-    {
-      /* I'm not entirely sure why this works, but it does. 
-	 Note that there are deliberately no breaks in this switch. */
-    case 3:
-      fputc(0,s->out_handle);
-    case 2:
-      fputc(0,s->out_handle);
-    case 1:
-      fputc(0,s->out_handle);
-    }
+static void pad_image(state *s, uint32_t val) { 
+  switch (val % 4)  { 
+    // I'm not entirely sure why this works, but it does. 
+    // Note that there are deliberately no breaks in this switch.
+  case 3:
+    fputc(0,s->out_handle);
+  case 2:
+    fputc(0,s->out_handle);
+  case 1:
+    fputc(0,s->out_handle);
+  }
 }
 
 
 
-static int write_vertical_file(state *s)
-{
+static int write_vertical_file(state *s) { 
   int32_t i,j, bytes_read = 0;
   off_t location;
   int32_t offset = (s->image_width * s->image_height) - s->image_width;
   unsigned char c;
-
+  
 #ifdef DEBUG
   print_status ("offset %"PRId32"  length %"PRId32"  width %"PRId32"\n",
 		offset, s->input_length, s->image_width);
 #endif
 
-  for (i = 0 ; i < s->image_height ; ++i)
-    {
-      for (j = 0 ; j < s->image_width ; ++j)
-	{ 
-	  if (s->direction) 
-	    {
-	      location =  offset - (s->image_width * i) + j;
-
-	      if (location < s->input_length)
-		{
+  for (i = 0 ; i < s->image_height ; ++i) {
+    for (j = 0 ; j < s->image_width ; ++j) {
+      if (s->direction) { 
+	location =  offset - (s->image_width * i) + j;
+	if (location < s->input_length) { 
 #ifdef DEBUG
-		  print_status ("bytes read %06"PRId32"  seeking to %06"PRId32,
-				bytes_read, location);
+	  print_status ("bytes read %06"PRId32"  seeking to %06"PRId32,
+			bytes_read, location);
 #endif
-		  /* RBF - Error check all fseek calls */
-		  fseeko(s->in_handle,location,SEEK_SET);
-		  c = fgetc(s->in_handle);
-		}
-	      else 
-		{
+	  if (fseeko(s->in_handle, location, SEEK_SET)) {
+	    return TRUE;
+	  }
+	  c = fgetc(s->in_handle); 
+	} else { 
 #ifdef DEBUG
-		  print_status ("padding"); 
+	  print_status ("padding"); 
 #endif
-		  /* We pad the image with black when necessary */
-		  c = padding();
-		}
-	    }
-	  else
-	    {
-	      if (bytes_read < s->input_length)
-		c = fgetc(s->in_handle);
-	      else
-		c = padding();
-	    }
-      
-	  ++bytes_read;
-	  write_byte(s,c);
-	
+	  // We pad the image with black when necessary 
+	  c = padding();
 	}
+      } else { 
+	if (bytes_read < s->input_length)
+	  c = fgetc(s->in_handle);
+	else
+	  c = padding();
+      }
+      
+      ++bytes_read;
+      write_byte(s, c);
+    }
 
-      if (s->direction)
-	pad_image(s,s->image_width);
-    }    
+    if (s->direction)
+      pad_image(s,s->image_width);
+  }    
   
   return FALSE;
 }
@@ -254,29 +242,26 @@ static int write_horizontal_file(state *s)
   int32_t i,j,location;
   unsigned char c;
 
-  for (i = 0 ; i < s->image_width ; i++)
-    {
-      for (j = 0 ; j < s->image_height ; ++j)
-	{ 
+  for (i = 0 ; i < s->image_width ; i++) {
+    for (j = 0 ; j < s->image_height ; ++j) {
+      
+      if (s->direction)
+	location = (s->image_width * (j+1)) - (i+1); 
+      else
+	location = s->image_height * (s->image_width - i -1) + j;
 
-	  if (s->direction)
-	    location = (s->image_width * (j+1)) - (i+1); 
-	  else
-	    location = s->image_height * (s->image_width - i -1) + j;
-
-	  if (location < s->input_length)
-	    {
-	      fseeko(s->in_handle,location,SEEK_SET);
-	      c = fgetc(s->in_handle);
-	    }
-	  else 
-	    /* We pad the image with black when necessary */
-	    c = padding();
+      if (location < s->input_length) {
+	fseeko(s->in_handle,location,SEEK_SET);
+	c = fgetc(s->in_handle);
+      } else {
+	// We pad the image with black when necessary 
+	c = padding();
+      }
 	  
-	  write_byte(s,c);
-	}
-      pad_image(s,s->image_height);
+      write_byte(s,c);
     }
+    pad_image(s,s->image_height);
+  }
   
   return FALSE;
 }
@@ -296,8 +281,8 @@ static int make_bmp_from_file(state *s, char *input)
     }
 
   o2 = basename(o1);
-  snprintf(output,PATH_MAX,"%s.bmp", o2);
-  /* We don't free o2 as it's statically allocated */
+  snprintf(output, PATH_MAX, "%s.bmp", o2);
+  // We don't free o2 as it's statically allocated 
   free(o1);
 
   if ((s->in_handle = fopen(input,"rb")) == NULL)
@@ -330,8 +315,10 @@ static int make_bmp_from_file(state *s, char *input)
   if (write_file_info(s))
     return TRUE;
 
-  if (s->orientation == ORIENTATION_VERTICAL)
-    write_vertical_file(s);
+  if (s->orientation == ORIENTATION_VERTICAL) {
+    if (write_vertical_file(s)) {
+      perror(output);
+    }
   else
     write_horizontal_file(s);
 
@@ -410,16 +397,15 @@ int main(int argc, char **argv)
 
   argv += optind;
       
-  while (*argv != NULL)
-    {
-      make_bmp_from_file(s,*argv);
-      ++argv;
-    }
+  while (*argv != NULL) {
+    make_bmp_from_file(s,*argv);
+    ++argv;
+  }
 
-  /* We don't bother cleaning up the state as we're about to exit. 
-     All of the memory we have
-     allocated is going to be returned to the operating system, so
-     there's no point in our explicitly free'ing it. */
+  // We don't bother cleaning up the state as we're about to exit. 
+  // All of the memory we have
+  // allocated is going to be returned to the operating system, so
+  // there's no point in our explicitly free'ing it. 
   
   return EXIT_SUCCESS;
 }
