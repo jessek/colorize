@@ -39,6 +39,7 @@ int find_file_size(char *fn, FILE *h, off_t *sz)
   if (fseeko(h, orig, SEEK_SET)) { 
     perror(fn);
     return TRUE;
+  }
 
   return FALSE;
 }

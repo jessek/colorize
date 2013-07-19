@@ -319,8 +319,9 @@ static int make_bmp_from_file(state *s, char *input)
     if (write_vertical_file(s)) {
       perror(output);
     }
-  else
+  } else {
     write_horizontal_file(s);
+  }
 
   if (s->verbose)
     print_status ("%s: Done.", __progname);
