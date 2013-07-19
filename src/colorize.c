@@ -41,6 +41,9 @@ static void usage(void)
 
 static int initialize_state(state *s)
 {
+  // RBF - PATH_MAX is limited to 255 characters on Windows. To support
+  // long filenames, increase this to 32767 and preprend \\?\ to each
+  // filename. 
   if ((s->input_fn = (char *)malloc(sizeof(char) * PATH_MAX)) == NULL)
     {
       perror(__progname);
