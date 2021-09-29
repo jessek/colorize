@@ -12,6 +12,9 @@
 #define DEFAULT_DIRECTION       DIRECTION_UP
 #define DEFAULT_IMAGE_WIDTH     100
 
+#if defined(__GNU__) && !defined(PATH_MAX)
+#define PATH_MAX 1024
+#endif
 
 typedef struct _state 
 {
